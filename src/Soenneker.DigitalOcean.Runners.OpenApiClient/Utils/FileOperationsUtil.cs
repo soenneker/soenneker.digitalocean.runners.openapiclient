@@ -95,7 +95,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         string json = await File.ReadAllTextAsync(openApiPath, cancellationToken);
         JsonNode root = JsonNode.Parse(json) ?? throw new InvalidOperationException("DigitalOcean OpenAPI JSON is empty.");
 
-        JsonObject properties = root["components"]?["schemas"]?["KafkaTopicConfig"]?["properties"] as JsonObject
+        JsonObject properties = root["components"]?["schemas"]?["kafka_topic_config"]?["properties"] as JsonObject
             ?? throw new InvalidOperationException("DigitalOcean KafkaTopicConfig schema was not found.");
 
         string[] propertyNames = ["flush_messages", "flush_ms", "max_compaction_lag_ms"];
