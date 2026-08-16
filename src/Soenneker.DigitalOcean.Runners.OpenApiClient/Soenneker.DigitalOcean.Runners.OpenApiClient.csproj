@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <Platforms>AnyCPU</Platforms>
+        <NoWarn>$(NoWarn);1591</NoWarn>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <Description>A runner that regenerates and updates Soenneker.DigitalOcean.OpenApiClient.</Description>
+        <Version Condition="'$(BUILD_VERSION)' == ''">4.0.0</Version>
+        <Version Condition="'$(BUILD_VERSION)' != ''">$(BUILD_VERSION)</Version>
+        <AssemblyName>Soenneker.DigitalOcean.Runners.OpenApiClient</AssemblyName>
+        <Copyright>Copyright © 2026 Jake Soenneker</Copyright>
+        <Authors>Jake Soenneker</Authors>
+        <Company>https://soenneker.com</Company>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <IsPackable>false</IsPackable>
+        <LangVersion>latest</LangVersion>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Soenneker.Extensions.LoggerConfiguration" Version="4.0.1321" />
+        <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.11" />
+        <PackageReference Include="Soenneker.Kiota.Util" Version="4.0.82" />
+        <PackageReference Include="Soenneker.Managers.Runners" Version="4.0.2363" />
+        <PackageReference Include="Soenneker.OpenApi.Fixer" Version="4.0.301" />
+        <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.128" />
+    </ItemGroup>
+</Project>

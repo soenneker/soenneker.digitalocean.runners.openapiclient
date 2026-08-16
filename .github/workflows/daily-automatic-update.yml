@@ -1,0 +1,45 @@
+name: daily-automatic-update
+on:
+  schedule:
+    - cron: "0 17 * * *"
+  workflow_dispatch:
+
+env:
+  ASPNETCORE_ENVIRONMENT: Production
+  GH__USERNAME: ${{ secrets.GH__USERNAME }}
+  GH__TOKEN: ${{ secrets.GH__TOKEN }}
+  GIT__TOKEN: ${{ secrets.GIT__TOKEN }}
+  GIT__NAME: ${{ secrets.GIT__NAME }}
+  GIT__EMAIL: ${{ secrets.GIT__EMAIL }}
+  NUGET__TOKEN: ${{ secrets.NUGET__TOKEN }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  daily-automatic-update:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setting up build version
+        run: |
+          version=$(($GITHUB_RUN_NUMBER))
+          echo "BUILD_VERSION=4.0.$version" >> ${GITHUB_ENV}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Restore
+        run: dotnet restore src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj
+
+      - name: Build
+        run: dotnet build src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj --configuration Release --no-restore
+
+      - name: Run
+        run: dotnet run --project src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj --configuration Release --no-restore --no-build --verbosity normal
