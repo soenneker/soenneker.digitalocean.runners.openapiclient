@@ -9,6 +9,8 @@ using Soenneker.Utils.Process.Abstract;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.Extensions.ValueTask;
@@ -71,6 +73,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         string targetFilePath = Path.Combine(gitDirectory, "openapi.json");
         await _fileUtil.DeleteIfExists(targetFilePath, cancellationToken: cancellationToken);
         await _yamlUtil.SaveAsJson(yamlFilePath, targetFilePath, cancellationToken: cancellationToken);
+        await NormalizeKafkaIntegerLimits(targetFilePath, cancellationToken);
 
         string fixedFilePath = Path.Combine(gitDirectory, "openapi.fixed.json");
         await _fileUtil.DeleteIfExists(fixedFilePath, cancellationToken: cancellationToken);
@@ -85,6 +88,29 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         await _kiotaUtil.Generate(fixedFilePath, "DigitalOceanOpenApiClient", Constants.Library, gitDirectory, cancellationToken).NoSync();
 
         await BuildAndPush(gitDirectory, cancellationToken).NoSync();
+    }
+
+    private static async ValueTask NormalizeKafkaIntegerLimits(string openApiPath, CancellationToken cancellationToken)
+    {
+        string json = await File.ReadAllTextAsync(openApiPath, cancellationToken);
+        JsonNode root = JsonNode.Parse(json) ?? throw new InvalidOperationException("DigitalOcean OpenAPI JSON is empty.");
+
+        JsonObject properties = root["components"]?["schemas"]?["KafkaTopicConfig"]?["properties"] as JsonObject
+            ?? throw new InvalidOperationException("DigitalOcean KafkaTopicConfig schema was not found.");
+
+        string[] propertyNames = ["flush_messages", "flush_ms", "max_compaction_lag_ms"];
+
+        foreach (string propertyName in propertyNames)
+        {
+            JsonObject property = properties[propertyName] as JsonObject
+                ?? throw new InvalidOperationException($"DigitalOcean KafkaTopicConfig.{propertyName} was not found.");
+
+            property["format"] = "int64";
+            property["default"] = long.MaxValue;
+            property["example"] = long.MaxValue;
+        }
+
+        await File.WriteAllTextAsync(openApiPath, root.ToJsonString(new JsonSerializerOptions {WriteIndented = false}), cancellationToken);
     }
 
     private static string ResolveNpmExecutable()
