@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Soenneker.Extensions.ValueTask;
@@ -70,6 +71,8 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         if (!await _fileUtil.Exists(yamlFilePath, cancellationToken))
             throw new InvalidOperationException("DigitalOcean OpenAPI bundle was not created.");
 
+        await SanitizeCredentialExamples(yamlFilePath, cancellationToken);
+
         string targetFilePath = Path.Combine(gitDirectory, "openapi.json");
         await _fileUtil.DeleteIfExists(targetFilePath, cancellationToken: cancellationToken);
         await _yamlUtil.SaveAsJson(yamlFilePath, targetFilePath, cancellationToken: cancellationToken);
@@ -88,6 +91,14 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         await _kiotaUtil.Generate(fixedFilePath, "DigitalOceanOpenApiClient", Constants.Library, gitDirectory, cancellationToken).NoSync();
 
         await BuildAndPush(gitDirectory, cancellationToken).NoSync();
+    }
+
+    private static async ValueTask SanitizeCredentialExamples(string yamlPath, CancellationToken cancellationToken)
+    {
+        string yaml = await File.ReadAllTextAsync(yamlPath, cancellationToken);
+        string sanitized = Regex.Replace(yaml, @"https://hooks\.slack\.com/services/[^\s\""']+", "https://example.invalid/slack-webhook");
+
+        await File.WriteAllTextAsync(yamlPath, sanitized, cancellationToken);
     }
 
     private static async ValueTask NormalizeKafkaIntegerLimits(string openApiPath, CancellationToken cancellationToken)
