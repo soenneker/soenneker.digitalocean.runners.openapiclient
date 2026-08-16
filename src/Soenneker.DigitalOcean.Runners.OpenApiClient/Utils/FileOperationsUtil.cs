@@ -60,7 +60,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         string yamlFilePath = Path.Combine(gitDirectory, "openapi.yaml");
         await _fileUtil.DeleteIfExists(yamlFilePath, cancellationToken: cancellationToken);
 
-        string npmExecutable = OperatingSystem.IsWindows() ? "npm.cmd" : "npm";
+        string npmExecutable = ResolveNpmExecutable();
         await _processUtil.Start(npmExecutable, specificationDirectory, "ci --ignore-scripts", waitForExit: true, cancellationToken: cancellationToken);
         await _processUtil.Start(npmExecutable, specificationDirectory,
             $"run bundle -- specification/DigitalOcean-public.v2.yaml -o \"{yamlFilePath}\"", waitForExit: true, cancellationToken: cancellationToken);
@@ -85,6 +85,18 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         await _kiotaUtil.Generate(fixedFilePath, "DigitalOceanOpenApiClient", Constants.Library, gitDirectory, cancellationToken).NoSync();
 
         await BuildAndPush(gitDirectory, cancellationToken).NoSync();
+    }
+
+    private static string ResolveNpmExecutable()
+    {
+        if (!OperatingSystem.IsWindows())
+            return "npm";
+
+        string? path = Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator)
+            .Select(static directory => Path.Combine(directory.Trim('"'), "npm.cmd"))
+            .FirstOrDefault(File.Exists);
+
+        return path ?? "npm.cmd";
     }
 
     public async ValueTask DeleteAllExceptCsproj(string directoryPath, CancellationToken cancellationToken = default)
