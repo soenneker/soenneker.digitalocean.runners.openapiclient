@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 
 namespace Soenneker.DigitalOcean.Runners.OpenApiClient.Utils.Abstract;
 
+/// <summary>
+/// Provides file cleanup and filesystem operations used by the generated-client update workflow.
+/// </summary>
 public interface IFileOperationsUtil
 {
     /// <summary>
