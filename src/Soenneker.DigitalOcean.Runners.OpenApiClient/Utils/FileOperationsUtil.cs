@@ -136,6 +136,12 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         return path ?? "npm.cmd";
     }
 
+    /// <summary>
+    /// Deletes generated files beneath the directory while preserving C# project files.
+    /// </summary>
+    /// <param name="directoryPath">Root directory whose generated contents should be removed.</param>
+    /// <param name="cancellationToken">Token used to cancel the operation.</param>
+    /// <returns>A task that completes after the targeted files have been deleted.</returns>
     public async ValueTask DeleteAllExceptCsproj(string directoryPath, CancellationToken cancellationToken = default)
     {
         if (!(await _directoryUtil.Exists(directoryPath, cancellationToken)))
