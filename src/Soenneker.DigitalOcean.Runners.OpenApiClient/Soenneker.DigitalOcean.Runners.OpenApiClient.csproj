@@ -29,6 +29,6 @@
         <PackageReference Include="Soenneker.Kiota.Util" Version="4.0.127" />
         <PackageReference Include="Soenneker.Managers.Runners" Version="4.0.2519" />
         <PackageReference Include="Soenneker.OpenApi.Fixer" Version="4.0.349" />
-        <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.185" />
+        <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.187" />
     </ItemGroup>
 </Project>
