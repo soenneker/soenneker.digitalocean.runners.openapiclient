@@ -31,4 +31,10 @@
         <PackageReference Include="Soenneker.OpenApi.Fixer" Version="4.0.363" />
         <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.193" />
     </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Soenneker.Enums.DeployEnvironment" Version="4.0.242" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Soenneker.Extensions.ValueTask" Version="4.0.123" />
+    </ItemGroup>
 </Project>
