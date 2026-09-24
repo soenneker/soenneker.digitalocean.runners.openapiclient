@@ -24,12 +24,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Soenneker.Extensions.LoggerConfiguration" Version="4.0.1393" />
+        <PackageReference Include="Soenneker.Extensions.LoggerConfiguration" Version="4.0.1394" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.12" />
-        <PackageReference Include="Soenneker.Kiota.Util" Version="4.0.132" />
-        <PackageReference Include="Soenneker.Managers.Runners" Version="4.0.2544" />
-        <PackageReference Include="Soenneker.OpenApi.Fixer" Version="4.0.363" />
-        <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.193" />
+        <PackageReference Include="Soenneker.Kiota.Util" Version="4.0.133" />
+        <PackageReference Include="Soenneker.Managers.Runners" Version="4.0.2546" />
+        <PackageReference Include="Soenneker.OpenApi.Fixer" Version="4.0.365" />
+        <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.194" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Soenneker.Enums.DeployEnvironment" Version="4.0.242" />
