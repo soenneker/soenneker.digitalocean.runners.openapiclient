@@ -63,7 +63,7 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         string yamlFilePath = Path.Combine(gitDirectory, "openapi.yaml");
         await _fileUtil.DeleteIfExists(yamlFilePath, cancellationToken: cancellationToken);
 
-        string npmExecutable = ResolveNpmExecutable();
+        string npmExecutable = await ResolveNpmExecutable(cancellationToken);
         await _processUtil.Start(npmExecutable, specificationDirectory, "ci --ignore-scripts", waitForExit: true, cancellationToken: cancellationToken);
         await _processUtil.Start(npmExecutable, specificationDirectory,
             $"run bundle -- specification/DigitalOcean-public.v2.yaml -o \"{yamlFilePath}\"", waitForExit: true, cancellationToken: cancellationToken);
@@ -93,17 +93,17 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
         await BuildAndPush(gitDirectory, cancellationToken).NoSync();
     }
 
-    private static async ValueTask SanitizeCredentialExamples(string yamlPath, CancellationToken cancellationToken)
+    private async ValueTask SanitizeCredentialExamples(string yamlPath, CancellationToken cancellationToken)
     {
-        string yaml = await File.ReadAllTextAsync(yamlPath, cancellationToken);
+        string yaml = await _fileUtil.Read(yamlPath, cancellationToken: cancellationToken);
         string sanitized = Regex.Replace(yaml, @"https://hooks\.slack\.com/services/[^\s\""']+", "https://example.invalid/slack-webhook");
 
-        await File.WriteAllTextAsync(yamlPath, sanitized, cancellationToken);
+        await _fileUtil.Write(yamlPath, sanitized, cancellationToken: cancellationToken);
     }
 
-    private static async ValueTask NormalizeKafkaIntegerLimits(string openApiPath, CancellationToken cancellationToken)
+    private async ValueTask NormalizeKafkaIntegerLimits(string openApiPath, CancellationToken cancellationToken)
     {
-        string json = await File.ReadAllTextAsync(openApiPath, cancellationToken);
+        string json = await _fileUtil.Read(openApiPath, cancellationToken: cancellationToken);
         JsonNode root = JsonNode.Parse(json) ?? throw new InvalidOperationException("DigitalOcean OpenAPI JSON is empty.");
 
         JsonObject properties = root["components"]?["schemas"]?["kafka_topic_config"]?["properties"] as JsonObject
@@ -121,19 +121,22 @@ public sealed class FileOperationsUtil : IFileOperationsUtil
             property["example"] = long.MaxValue;
         }
 
-        await File.WriteAllTextAsync(openApiPath, root.ToJsonString(new JsonSerializerOptions {WriteIndented = false}), cancellationToken);
+        await _fileUtil.Write(openApiPath, root.ToJsonString(new JsonSerializerOptions {WriteIndented = false}), cancellationToken: cancellationToken);
     }
 
-    private static string ResolveNpmExecutable()
+    private async ValueTask<string> ResolveNpmExecutable(CancellationToken cancellationToken)
     {
         if (!OperatingSystem.IsWindows())
             return "npm";
 
-        string? path = Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator)
-            .Select(static directory => Path.Combine(directory.Trim('"'), "npm.cmd"))
-            .FirstOrDefault(File.Exists);
+        foreach (string directory in Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator) ?? [])
+        {
+            string path = Path.Combine(directory.Trim('"'), "npm.cmd");
+            if (await _fileUtil.Exists(path, cancellationToken))
+                return path;
+        }
 
-        return path ?? "npm.cmd";
+        return "npm.cmd";
     }
 
     /// <summary>
