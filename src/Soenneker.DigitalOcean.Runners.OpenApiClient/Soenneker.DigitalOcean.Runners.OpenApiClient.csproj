@@ -32,7 +32,7 @@
         <PackageReference Include="Soenneker.Utils.Yaml" Version="4.0.194" />
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="Soenneker.Enums.DeployEnvironment" Version="4.0.242" />
+        <PackageReference Include="Soenneker.Enums.DeployEnvironment" Version="4.0.244" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.ValueTask" Version="4.0.123" />
