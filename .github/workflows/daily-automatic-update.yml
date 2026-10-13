@@ -45,7 +45,7 @@ jobs:
         run: dotnet build src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj --configuration Release --no-restore
 
       - name: Log in to NuGet
-        uses: soenneker/nuget-resilient-login@v5
+        uses: soenneker/nuget-resilient-login@v6
         id: nuget-login
         with:
           user: soenneker
