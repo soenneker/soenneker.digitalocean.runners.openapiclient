@@ -18,7 +18,6 @@ concurrency:
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
 
@@ -44,13 +43,7 @@ jobs:
       - name: Build
         run: dotnet build src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj --configuration Release --no-restore
 
-      - name: Log in to NuGet
-        uses: soenneker/nuget-resilient-login@v7
-        id: nuget-login
-        with:
-          user: soenneker
-
       - name: Run
         env:
-          NUGET__TOKEN: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+          NUGET__TOKEN: ${{ secrets.NUGET__TOKEN }}
         run: dotnet run --project src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj --configuration Release --no-restore --no-build --verbosity normal
