@@ -35,7 +35,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 10.0.401
+          dotnet-version: 10.0.402
 
       - name: Restore
         run: dotnet restore src/Soenneker.DigitalOcean.Runners.OpenApiClient/Soenneker.DigitalOcean.Runners.OpenApiClient.csproj
