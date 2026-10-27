@@ -27,10 +27,10 @@
     <ItemGroup>
         <PackageReference Include="Soenneker.Extensions.LoggerConfiguration" Version="11.0.1451" />
         <PackageReference Include="Microsoft.Extensions.Hosting" Version="11.0.0-rc.3.26522.148" />
-        <PackageReference Include="Soenneker.Kiota.Util" Version="11.0.174" />
+        <PackageReference Include="Soenneker.Kiota.Util" Version="11.0.175" />
         <PackageReference Include="Soenneker.Managers.Runners" Version="11.0.2663" />
-        <PackageReference Include="Soenneker.OpenApi.Fixer" Version="11.0.409" />
-        <PackageReference Include="Soenneker.Utils.Yaml" Version="11.0.235" />
+        <PackageReference Include="Soenneker.OpenApi.Fixer" Version="11.0.410" />
+        <PackageReference Include="Soenneker.Utils.Yaml" Version="11.0.236" />
     </ItemGroup>
     <ItemGroup>
         <PackageReference Include="Soenneker.Enums.DeployEnvironment" Version="11.0.262" />
