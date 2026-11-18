@@ -73,7 +73,8 @@ public sealed class ConsoleHostedService : IHostedService
     /// <returns>A task that completes when host shutdown has finished.</returns>
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.LogDebug("Exiting with return code: {exitCode}", _exitCode);
+        if (_logger.IsEnabled(LogLevel.Debug))
+            _logger.LogDebug("Exiting with return code: {exitCode}", _exitCode);
 
         // Exit code may be null if the user cancelled via Ctrl+C/SIGTERM
         Environment.ExitCode = _exitCode.GetValueOrDefault(-1);
